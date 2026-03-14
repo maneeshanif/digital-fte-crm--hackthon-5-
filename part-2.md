@@ -2404,7 +2404,1531 @@ async def get_support_categories():
 
 ---
 
-## Exercise 2.3: Next.js Web Support Form (4-5 hours)
+## Exercise 2.3: Next.js Complete Frontend - 5 Pages (6-8 hours)
+
+### Task: Build Complete 5-Page Application (REQUIRED DELIVERABLE)
+
+This is a **required deliverable**. You must build a complete, production-ready frontend with **5 pages**:
+
+**Customer Side (2 pages):**
+- Page 1: `/support` - Support form for ticket submission
+- Page 2: `/support/ticket/[id]` - Ticket status page for customers
+
+**Admin Side (3 pages):**
+- Page 3: `/admin` - Dashboard with metrics and escalation queue
+- Page 4: `/admin/tickets` - All tickets table with filtering
+- Page 5: `/admin/tickets/[id]` - Single ticket detail with human reply capability
+
+---
+
+## Complete Frontend Architecture
+
+### File Structure
+
+```
+web-form/
+├── package.json
+├── tsconfig.json
+├── tailwind.config.js
+├── next.config.js
+├── .env.local
+└── app/
+    ├── layout.tsx                    # Root layout
+    ├── page.tsx                      # Home page (redirects to /support)
+    ├── globals.css                     # Global styles
+    │
+    ├── customer/                       # CUSTOMER SIDE
+    │   ├── support/
+    │   │   └── page.tsx              # /support (form page)
+    │   └── ticket/
+    │       └── [id]/
+    │           └── page.tsx            # /support/ticket/[id] (status page)
+    │
+    ├── admin/                          # ADMIN SIDE
+    │   ├── middleware.ts               # Admin authentication
+    │   ├── page.tsx                   # /admin (dashboard)
+    │   └── tickets/
+    │       ├── page.tsx               # /admin/tickets (all tickets)
+    │       └── [id]/
+    │           └── page.tsx            # /admin/tickets/[id] (single ticket)
+    │
+    ├── api/                            # API routes for frontend
+    │   └── tickets/
+    │       └── [id]/
+    │           └── route.ts             # Ticket detail API
+    │
+    └── components/
+        ├── customer/                      # CUSTOMER COMPONENTS
+        │   ├── SupportForm.tsx
+        │   ├── SubmissionSuccess.tsx
+        │   ├── TicketStatus.tsx
+        │   └── TicketNotFound.tsx
+        │
+        └── admin/                          # ADMIN COMPONENTS
+            ├── StatsCards.tsx
+            ├── ChannelMetrics.tsx
+            ├── EscalationQueue.tsx
+            ├── TicketsTable.tsx
+            ├── ConversationHistory.tsx
+            ├── CustomerHistory.tsx
+            └── ReplyBox.tsx
+```
+
+---
+
+## Customer Side Implementation
+
+### Page 1: Support Form (`/support`)
+
+#### `web-form/app/customer/support/page.tsx`
+
+```typescript
+/**
+ * Customer Support Page - Ticket Submission Form
+ */
+'use client';
+
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import SupportForm from '@/components/customer/SupportForm';
+import SubmissionSuccess from '@/components/customer/SubmissionSuccess';
+
+export default function SupportPage() {
+  const router = useRouter();
+  const [submittedTicketId, setSubmittedTicketId] = React.useState<string | null>(null);
+
+  const handleFormSubmit = async (ticketData: any) => {
+    try {
+      const response = await fetch('/api/tickets', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(ticketData),
+      });
+
+      const result = await response.json();
+      setSubmittedTicketId(result.ticket_id);
+
+    } catch (error) {
+      console.error('Failed to submit ticket:', error);
+    }
+  };
+
+  if (submittedTicketId) {
+    return <SubmissionSuccess ticketId={submittedTicketId} onNewTicket={() => setSubmittedTicketId(null)} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              TechFlow Customer Support
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300">
+              Submit your inquiry and we'll get back to you within 24 hours
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="md:col-span-2">
+              <SupportForm onSubmit={handleFormSubmit} />
+            </div>
+          </div>
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
+                Contact Options
+              </h3>
+              <ul className="space-y-2">
+                <li className="flex items-start">
+                  <span className="text-blue-600 mr-2">📧</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Email us at support@techflow.com
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-600 mr-2">💬</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Chat via WhatsApp: +1 (555) 123-4567
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-purple-600 mr-2">🌐</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Use this online form (fastest response time)
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900 dark:text-white">
+                Response Times
+              </h3>
+              <ul className="space-y-2">
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-2">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Critical: 1 hour
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-yellow-500 mr-2">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    High: 4 hours
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-blue-500 mr-2">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Medium: 24 hours
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-gray-500 mr-2">✓</span>
+                  <span className="text-gray-700 dark:text-gray-300">
+                    Low: 72 hours
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### Page 2: Ticket Status (`/support/ticket/[id]`)
+
+#### `web-form/app/customer/ticket/[id]/page.tsx`
+
+```typescript
+/**
+ * Customer Ticket Status Page
+ */
+'use client';
+
+import React from 'react';
+import { useParams } from 'next/navigation';
+import TicketStatus from '@/components/customer/TicketStatus';
+import TicketNotFound from '@/components/customer/TicketNotFound';
+
+export default function TicketStatusPage() {
+  const params = useParams();
+  const ticketId = params.id as string;
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <TicketStatus ticketId={ticketId} />
+    </div>
+  );
+}
+```
+
+#### `web-form/app/components/customer/TicketStatus.tsx`
+
+```typescript
+/**
+ * Ticket Status Display Component
+ */
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Clock, MessageCircle, CheckCircle2, AlertCircle } from 'lucide-react';
+
+interface TicketStatusProps {
+  ticketId: string;
+}
+
+interface TicketData {
+  id: string;
+  ticket_number: string;
+  status: 'open' | 'in_progress' | 'resolved' | 'escalated';
+  category: string;
+  priority: 'low' | 'medium' | 'high' | 'critical';
+  created_at: string;
+  updated_at: string;
+  resolved_at: string | null;
+  messages: Array<{
+    role: string;
+    content: string;
+    created_at: string;
+  }>;
+}
+
+export default function TicketStatus({ ticketId }: TicketStatusProps) {
+  const [ticket, setTicket] = useState<TicketData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchTicketStatus();
+  }, [ticketId]);
+
+  const fetchTicketStatus = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/tickets/${ticketId}`);
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError('Ticket not found');
+        } else {
+          setError('Failed to load ticket status');
+        }
+        setTicket(null);
+        return;
+      }
+
+      const data = await response.json();
+      setTicket(data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching ticket:', err);
+      setError('Failed to load ticket status');
+      setTicket(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors = {
+      open: 'bg-blue-100 text-blue-800',
+      'in_progress': 'bg-yellow-100 text-yellow-800',
+      resolved: 'bg-green-100 text-green-800',
+      escalated: 'bg-red-100 text-red-800'
+    };
+    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+  };
+
+  const getPriorityColor = (priority: string) => {
+    const colors = {
+      low: 'text-gray-600',
+      medium: 'text-yellow-600',
+      high: 'text-orange-600',
+      critical: 'text-red-600'
+    };
+    return colors[priority as keyof typeof colors] || 'text-gray-600';
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (error || !ticket) {
+    return <TicketNotFound />;
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto p-6">
+      <button
+        onClick={() => window.history.back()}
+        className="mb-6 flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+      >
+        <ArrowLeft className="w-5 h-5 mr-2" />
+        Back to Support
+      </button>
+
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <div className={`${getStatusColor(ticket.status)} p-6`}>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold">
+              Ticket #{ticket.ticket_number}
+            </h2>
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white dark:bg-gray-900">
+              {ticket.status.replace('_', ' ').toUpperCase()}
+            </span>
+          </div>
+          <p className="text-gray-600 dark:text-gray-300">
+            Created: {new Date(ticket.created_at).toLocaleString()}
+          </p>
+        </div>
+
+        <div className="p-6 space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Category
+              </label>
+              <p className="text-gray-900 dark:text-white capitalize">
+                {ticket.category.replace('_', ' ')}
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Priority
+              </label>
+              <p className={`font-semibold ${getPriorityColor(ticket.priority)}`}>
+                {ticket.priority.toUpperCase()}
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+            <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+              Conversation History
+            </h3>
+            <div className="space-y-4">
+              {ticket.messages.slice(-5).map((message, idx) => (
+                <div
+                  key={idx}
+                  className={`flex ${
+                    message.role === 'customer' ? 'flex-row-reverse' : 'flex-row'
+                  }`}
+                >
+                  <div
+                    className={`max-w-xs p-3 rounded-lg ${
+                      message.role === 'customer'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white'
+                    }`}
+                  >
+                    {message.role === 'customer' ? 'You' : 'AI'}
+                  </div>
+                  <div className="flex-1 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+                    <p className="text-gray-900 dark:text-white">
+                      {message.content}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {new Date(message.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {ticket.status === 'resolved' && (
+            <div className="bg-green-50 dark:bg-green-900/20 p-6 border-t border-green-200 dark:border-green-800">
+              <div className="flex items-center text-green-700 dark:text-green-300">
+                <CheckCircle2 className="w-6 h-6 mr-2" />
+                <span className="font-semibold">
+                  This ticket has been resolved!
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## Admin Side Implementation
+
+### Admin Middleware
+
+#### `web-form/app/admin/middleware.ts`
+
+```typescript
+/**
+ * Admin Authentication Middleware
+ */
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+export function adminMiddleware(req: NextRequest) {
+  const adminPassword = req.headers.get('x-admin-password');
+  const validPassword = process.env.ADMIN_PASSWORD || 'admin123';
+
+  if (adminPassword !== validPassword) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const response = NextResponse.next();
+  response.headers.set('x-admin-authenticated', 'true');
+  return response;
+}
+```
+
+### Page 3: Admin Dashboard (`/admin`)
+
+#### `web-form/app/admin/page.tsx`
+
+```typescript
+/**
+ * Admin Dashboard - Overview with Metrics and Escalation Queue
+ */
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { BarChart3, TrendingUp, Activity, Users, AlertTriangle } from 'lucide-react';
+import StatsCards from '@/components/admin/StatsCards';
+import ChannelMetrics from '@/components/admin/ChannelMetrics';
+import EscalationQueue from '@/components/admin/EscalationQueue';
+
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({
+    totalTickets: 0,
+    resolvedToday: 0,
+    escalatedToday: 0,
+    avgResponseTime: 0,
+    activeConversations: 0
+  });
+
+  const [escalations, setEscalations] = useState([
+    { id: '1', ticketNumber: 'TKT-1234', customer: 'john@acme.com', reason: 'Refund request $50k', priority: 'CRITICAL', time: '2 hours ago' },
+    { id: '2', ticketNumber: 'TKT-1235', customer: '+15551234567', reason: 'Legal query', priority: 'HIGH', time: '4 hours ago' },
+    { id: '3', ticketNumber: 'TKT-1236', customer: 'mike@co.com', reason: 'HIPAA documentation', priority: 'HIGH', time: '6 hours ago' }
+  ]);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await fetch('/api/admin/metrics');
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Failed to fetch dashboard stats:', error);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 shadow-sm">
+        <div className="container mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              TechFlow Admin Dashboard
+            </h1>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600 dark:text-gray-300">
+                {new Date().toLocaleString()}
+              </span>
+              <div className="flex items-center text-green-600">
+                <Activity className="w-5 h-5 mr-1" />
+                <span className="font-semibold">
+                  3 Workers Online
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Stats Cards */}
+          <StatsCards stats={stats} />
+
+          {/* Channel Metrics */}
+          <div className="lg:col-span-2">
+            <ChannelMetrics />
+          </div>
+
+          {/* Escalation Queue - Most Important */}
+          <div className="lg:col-span-3">
+            <EscalationQueue escalations={escalations} />
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            <TrendingUp className="w-5 h-5 mr-2" />
+            View All Tickets
+          </button>
+          <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            <Users className="w-5 h-5 mr-2" />
+            Manage Customers
+          </button>
+          <button className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            <BarChart3 className="w-5 h-5 mr-2" />
+            View Analytics
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+#### `web-form/app/components/admin/StatsCards.tsx`
+
+```typescript
+/**
+ * Stats Cards Component - Overview Metrics
+ */
+'use client';
+
+import React from 'react';
+import { CheckCircle2, Clock, MessageCircle, AlertTriangle, TrendingUp } from 'lucide-react';
+
+interface StatsCardsProps {
+  stats: {
+    totalTickets: number;
+    resolvedToday: number;
+    escalatedToday: number;
+    avgResponseTime: number;
+    activeConversations: number;
+  };
+}
+
+export default function StatsCards({ stats }: StatsCardsProps) {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Total Tickets */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            Total Tickets
+          </h3>
+          <MessageCircle className="w-5 h-5 text-blue-600" />
+        </div>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          {stats.totalTickets}
+        </p>
+      </div>
+
+      {/* Resolved Today */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            Resolved Today
+          </h3>
+          <CheckCircle2 className="w-5 h-5 text-green-600" />
+        </div>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          {stats.resolvedToday}
+        </p>
+      </div>
+
+      {/* Escalated Today */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            Escalated Today
+          </h3>
+          <AlertTriangle className="w-5 h-5 text-red-600" />
+        </div>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          {stats.escalatedToday}
+        </p>
+      </div>
+
+      {/* Avg Response Time */}
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-sm font-medium text-gray-600 dark:text-gray-300">
+            Avg Response Time
+          </h3>
+          <Clock className="w-5 h-5 text-yellow-600" />
+        </div>
+        <p className="text-3xl font-bold text-gray-900 dark:text-white">
+          {stats.avgResponseTime.toFixed(1)}s
+        </p>
+      </div>
+    </div>
+  );
+}
+```
+
+#### `web-form/app/components/admin/EscalationQueue.tsx`
+
+```typescript
+/**
+ * Escalation Queue Component - Most Important Admin Feature
+ */
+'use client';
+
+import React from 'react';
+import { AlertTriangle, Clock, User, ExternalLink, ChevronRight } from 'lucide-react';
+
+interface EscalationItem {
+  id: string;
+  ticketNumber: string;
+  customer: string;
+  reason: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  time: string;
+}
+
+interface EscalationQueueProps {
+  escalations: EscalationItem[];
+}
+
+export default function EscalationQueue({ escalations }: EscalationQueueProps) {
+  const getPriorityBadge = (priority: string) => {
+    const colors = {
+      LOW: 'bg-gray-100 text-gray-800',
+      MEDIUM: 'bg-yellow-100 text-yellow-800',
+      HIGH: 'bg-orange-100 text-orange-800',
+      CRITICAL: 'bg-red-100 text-red-800'
+    };
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-bold ${colors[priority as keyof typeof colors]}`}>
+        {priority}
+      </span>
+    );
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-red-50 dark:bg-red-900/20 p-6 border-l-4 border-red-600">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <AlertTriangle className="w-6 h-6 text-red-600 mr-2" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              Escalation Queue
+            </h2>
+          </div>
+          <span className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+            {escalations.length} Pending
+          </span>
+        </div>
+        <p className="text-sm text-red-700 dark:text-red-300 mt-2">
+          These tickets require human intervention. Review and respond ASAP.
+        </p>
+      </div>
+
+      <div className="divide-y divide-gray-200 dark:divide-gray-700">
+        {escalations.map((escalation) => (
+          <div
+            key={escalation.id}
+            className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {escalation.time}
+                </span>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  #{escalation.ticketNumber}
+                </h3>
+              </div>
+              {getPriorityBadge(escalation.priority)}
+            </div>
+
+            <div className="flex items-center mb-3">
+              <User className="w-4 h-4 text-gray-400 mr-2" />
+              <span className="text-gray-700 dark:text-gray-300 font-medium">
+                {escalation.customer}
+              </span>
+            </div>
+
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+              <div className="flex items-start mb-2">
+                <AlertTriangle className="w-5 h-5 text-orange-600 mr-2 mt-0.5" />
+                <span className="font-medium text-gray-900 dark:text-white">
+                  Reason: {escalation.reason}
+                </span>
+              </div>
+            </div>
+
+            <button className="w-full mt-4 flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+              Review & Reply
+              <ChevronRight className="w-5 h-5 ml-2" />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### Page 4: All Tickets (`/admin/tickets`)
+
+#### `web-form/app/admin/tickets/page.tsx`
+
+```typescript
+/**
+ * Admin All Tickets Page
+ */
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, Download, Plus } from 'lucide-react';
+import TicketsTable from '@/components/admin/TicketsTable';
+
+export default function AdminTicketsPage() {
+  const [tickets, setTickets] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    status: 'all',
+    channel: 'all',
+    priority: 'all'
+  });
+
+  useEffect(() => {
+    fetchTickets();
+  }, [filters]);
+
+  const fetchTickets = async () => {
+    try {
+      setLoading(true);
+      const queryParams = new URLSearchParams(
+        Object.entries(filters).filter(([_, v]) => v !== 'all')
+      ).toString();
+
+      const response = await fetch(`/api/admin/tickets?${queryParams}`);
+      const data = await response.json();
+      setTickets(data.tickets);
+    } catch (error) {
+      console.error('Failed to fetch tickets:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            All Tickets
+          </h1>
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => setFilters({ ...filters, status: 'all' })}
+              className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors"
+            >
+              All
+            </button>
+            <button
+              onClick={() => setFilters({ ...filters, status: 'open' })}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            >
+              Open
+            </button>
+            <button
+              onClick={() => setFilters({ ...filters, status: 'resolved' })}
+              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+            >
+              Resolved
+            </button>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-6">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center">
+              <Search className="w-5 h-5 text-gray-400 mr-2" />
+              <input
+                type="text"
+                placeholder="Search tickets..."
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:text-white"
+              />
+            </div>
+            <select
+              value={filters.channel}
+              onChange={(e) => setFilters({ ...filters, channel: e.target.value })}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:text-white"
+            >
+              <option value="all">All Channels</option>
+              <option value="email">📧 Email</option>
+              <option value="whatsapp">💬 WhatsApp</option>
+              <option value="web_form">🌐 Web Form</option>
+            </select>
+            <select
+              value={filters.priority}
+              onChange={(e) => setFilters({ ...filters, priority: e.target.value })}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:text-white"
+            >
+              <option value="all">All Priorities</option>
+              <option value="critical">🔴 Critical</option>
+              <option value="high">🟠 High</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+            <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded-lg transition-colors">
+              <Filter className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
+        </div>
+
+        {/* Tickets Table */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
+          </div>
+        ) : (
+          <TicketsTable tickets={tickets} />
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+#### `web-form/app/components/admin/TicketsTable.tsx`
+
+```typescript
+/**
+ * Tickets Table Component
+ */
+'use client';
+
+import React from 'react';
+import { ExternalLink, Clock, CheckCircle2, AlertTriangle } from 'lucide-react';
+
+export default function TicketsTable({ tickets }: { tickets: any[] }) {
+  const getStatusBadge = (status: string) => {
+    const badges = {
+      open: 'bg-blue-100 text-blue-800',
+      'in_progress': 'bg-yellow-100 text-yellow-800',
+      resolved: 'bg-green-100 text-green-800',
+      escalated: 'bg-red-100 text-red-800'
+    };
+    return badges[status as keyof typeof badges] || 'bg-gray-100 text-gray-800';
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead className="bg-gray-50 dark:bg-gray-900">
+            <tr>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Ticket #
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Customer
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Channel
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Category
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Priority
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Created
+              </th>
+              <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            {tickets.map((ticket) => (
+              <tr key={ticket.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                <td className="px-6 py-4">
+                  <span className="font-medium text-blue-600 hover:underline cursor-pointer">
+                    {ticket.ticket_number}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-gray-900 dark:text-white">
+                  {ticket.customer_email}
+                </td>
+                <td className="px-6 py-4">
+                  {ticket.channel === 'email' && '📧'}
+                  {ticket.channel === 'whatsapp' && '💬'}
+                  {ticket.channel === 'web_form' && '🌐'}
+                  <span className="ml-2 capitalize text-gray-700 dark:text-gray-300">
+                    {ticket.channel.replace('_', ' ')}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-gray-900 dark:text-white capitalize">
+                  {ticket.category}
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`font-semibold ${
+                    ticket.priority === 'critical' ? 'text-red-600' :
+                    ticket.priority === 'high' ? 'text-orange-600' :
+                    ticket.priority === 'medium' ? 'text-yellow-600' : 'text-gray-600'
+                  }`}>
+                    {ticket.priority.toUpperCase()}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${getStatusBadge(ticket.status)}`}>
+                    {ticket.status.replace('_', ' ').toUpperCase()}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-gray-600 dark:text-gray-400">
+                  {new Date(ticket.created_at).toLocaleString()}
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center justify-end space-x-2">
+                    <button className="p-2 text-blue-600 hover:text-blue-800 transition-colors">
+                      <Clock className="w-4 h-4" />
+                    </button>
+                    <button className="p-2 text-green-600 hover:text-green-800 transition-colors">
+                      <CheckCircle2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+```
+
+### Page 5: Single Ticket with Human Reply (`/admin/tickets/[id]`)
+
+#### `web-form/app/admin/tickets/[id]/page.tsx`
+
+```typescript
+/**
+ * Admin Single Ticket Page - Human Reply Interface
+ * THIS IS THE MOST IMPORTANT ADMIN PAGE - WHERE HUMAN IN THE LOOP HAPPENS
+ */
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import ConversationHistory from '@/components/admin/ConversationHistory';
+import CustomerHistory from '@/components/admin/CustomerHistory';
+import ReplyBox from '@/components/admin/ReplyBox';
+import { ArrowLeft, Send, CheckCircle2, RotateCcw, AlertTriangle } from 'lucide-react';
+
+export default function AdminTicketDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const ticketId = params.id as string;
+
+  const [ticket, setTicket] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [sendingReply, setSendingReply] = useState(false);
+
+  useEffect(() => {
+    fetchTicketDetails();
+  }, [ticketId]);
+
+  const fetchTicketDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/admin/tickets/${ticketId}`);
+      const data = await response.json();
+      setTicket(data);
+    } catch (error) {
+      console.error('Failed to fetch ticket:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReply = async (replyData: any) => {
+    try {
+      setSendingReply(true);
+      const response = await fetch(`/api/admin/tickets/${ticketId}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(replyData),
+      });
+
+      if (response.ok) {
+        // Update ticket locally
+        setTicket({
+          ...ticket,
+          status: 'resolved',
+          resolved_at: new Date().toISOString()
+        });
+
+        // Show success message
+        alert('Reply sent successfully!');
+      } else {
+        alert('Failed to send reply');
+      }
+    } catch (error) {
+      console.error('Error sending reply:', error);
+      alert('Failed to send reply');
+    } finally {
+      setSendingReply(false);
+    }
+  };
+
+  const handleMarkResolved = async () => {
+    try {
+      const response = await fetch(`/api/admin/tickets/${ticketId}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'resolved' }),
+      });
+
+      if (response.ok) {
+        setTicket({
+          ...ticket,
+          status: 'resolved',
+          resolved_at: new Date().toISOString()
+        });
+      }
+    } catch (error) {
+      console.error('Error marking resolved:', error);
+    }
+  };
+
+  if (loading || !ticket) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="mb-6">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to All Tickets
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left Column - Ticket Details */}
+          <div className="space-y-6">
+            {/* Ticket Header */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Ticket #{ticket.ticket_number}
+                </h1>
+                {ticket.status === 'escalated' && (
+                  <span className="flex items-center bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
+                    <AlertTriangle className="w-4 h-4 mr-1" />
+                    ESCALATED
+                  </span>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                    Customer
+                  </label>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-2">
+                      👤
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white">
+                        {ticket.customer_name}
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        {ticket.customer_email}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                    Channel
+                  </label>
+                  <div className="flex items-center">
+                    {ticket.channel === 'email' && '📧'}
+                    {ticket.channel === 'whatsapp' && '💬'}
+                    {ticket.channel === 'web_form' && '🌐'}
+                    <span className="ml-2 capitalize text-gray-900 dark:text-white font-medium">
+                      {ticket.channel.replace('_', ' ')}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                    Category
+                  </label>
+                  <p className="text-gray-900 dark:text-white capitalize">
+                    {ticket.category}
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">
+                    Priority
+                  </label>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${
+                    ticket.priority === 'critical' ? 'bg-red-100 text-red-800' :
+                    ticket.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                    ticket.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {ticket.priority.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+
+              {ticket.status === 'escalated' && (
+                <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                  <div className="flex items-start">
+                    <AlertTriangle className="w-5 h-5 text-red-600 mr-2 mt-0.5" />
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white mb-1">
+                        Escalation Reason
+                      </p>
+                      <p className="text-sm text-gray-700 dark:text-gray-300">
+                        {ticket.escalation_reason || 'Agent escalated this ticket'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            </div>
+
+            {/* Customer History */}
+            <CustomerHistory customerId={ticket.customer_id} />
+
+            {/* Conversation History */}
+            <ConversationHistory conversationId={ticket.conversation_id} />
+          </div>
+
+          {/* Right Column - Reply Interface */}
+          <div className="space-y-6">
+            {/* Reply Box - THE MOST IMPORTANT PART */}
+            <ReplyBox
+              ticket={ticket}
+              onReply={handleReply}
+              sending={sendingReply}
+            />
+
+            {/* Quick Actions */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+              <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                Quick Actions
+              </h3>
+              <div className="space-y-3">
+                <button
+                  onClick={handleMarkResolved}
+                  disabled={ticket.status === 'resolved' || sendingReply}
+                  className="w-full flex items-center justify-center bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white px-4 py-3 rounded-lg font-medium transition-colors"
+                >
+                  <CheckCircle2 className="w-5 h-5 mr-2" />
+                  Mark as Resolved
+                </button>
+                <button className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg font-medium transition-colors">
+                  <RotateCcw className="w-5 h-5 mr-2" />
+                  Reassign to Another Agent
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+#### `web-form/app/components/admin/ReplyBox.tsx`
+
+```typescript
+/**
+ * Reply Box Component - Human In The Loop Interface
+ * THIS IS WHERE THE HUMAN REPLY ACTUALLY HAPPENS
+ */
+'use client';
+
+import React, { useState } from 'react';
+import { Send, Loader2 } from 'lucide-react';
+
+interface ReplyBoxProps {
+  ticket: any;
+  onReply: (replyData: any) => Promise<void>;
+  sending: boolean;
+}
+
+export default function ReplyBox({ ticket, onReply, sending }: ReplyBoxProps) {
+  const [reply, setReply] = useState('');
+  const [selectedChannel, setSelectedChannel] = useState(ticket.channel);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!reply.trim()) {
+      return;
+    }
+
+    await onReply({
+      message: reply,
+      channel: selectedChannel
+    });
+
+    setReply('');
+  };
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+      <div className="bg-blue-600 p-4">
+        <h2 className="text-xl font-bold text-white mb-2">
+          💬 Reply to Customer
+        </h2>
+        <p className="text-blue-100 text-sm">
+          Send via: {selectedChannel.replace('_', ' ').toUpperCase()}
+        </p>
+      </div>
+
+      <div className="p-6">
+        {/* Customer Message */}
+        <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6">
+          <div className="flex items-start mb-2">
+            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+              👤
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                Customer's Message
+              </p>
+              <p className="text-gray-900 dark:text-white">
+                {ticket.latest_message || 'No recent message'}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Reply Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Channel Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Send Reply Via
+            </label>
+            <div className="flex space-x-4">
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="channel"
+                  value="email"
+                  checked={selectedChannel === 'email'}
+                  onChange={(e) => setSelectedChannel('email')}
+                  className="mr-2"
+                />
+                <span className="text-gray-900 dark:text-white">📧 Email</span>
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="channel"
+                  value="whatsapp"
+                  checked={selectedChannel === 'whatsapp'}
+                  onChange={(e) => setSelectedChannel('whatsapp')}
+                  className="mr-2"
+                />
+                <span className="text-gray-900 dark:text-white">💬 WhatsApp</span>
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="channel"
+                  value="web_form"
+                  checked={selectedChannel === 'web_form'}
+                  onChange={(e) => setSelectedChannel('web_form')}
+                  className="mr-2"
+                />
+                <span className="text-gray-900 dark:text-white">🌐 Web Form</span>
+              </label>
+            </div>
+          </div>
+
+          {/* Reply Text Area */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Your Reply
+            </label>
+            <textarea
+              value={reply}
+              onChange={(e) => setReply(e.target.value)}
+              placeholder="Type your reply here... The customer will receive this via the selected channel."
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-900 dark:text-white"
+              rows={6}
+            />
+          </div>
+
+          {/* Send Button */}
+          <button
+            type="submit"
+            disabled={sending || !reply.trim()}
+            className="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+          >
+            {sending ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5 mr-2" />
+                Send Reply
+              </>
+            )}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## Frontend API Routes
+
+### `web-form/app/api/tickets/[id]/route.ts`
+
+```typescript
+/**
+ * API Route for Ticket Detail - Used by Customer Status Page
+ */
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const ticketId = params.id;
+
+  try {
+    // Fetch ticket details from backend
+    const response = await fetch(`${process.env.BACKEND_URL}/api/tickets/${ticketId}`);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json({ error: 'Ticket not found' }, { status: 404 });
+      }
+      return NextResponse.json({ error: 'Failed to fetch ticket' }, { status: 500 });
+    }
+
+    const ticket = await response.json();
+
+    return NextResponse.json(ticket);
+  } catch (error) {
+    console.error('Error fetching ticket:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+```
+
+### `web-form/app/api/tickets/route.ts`
+
+```typescript
+/**
+ * API Route for Creating Tickets
+ */
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    // Forward to backend API
+    const response = await fetch(`${process.env.BACKEND_URL}/api/tickets`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      return NextResponse.json({ error: 'Failed to create ticket' }, { status: 500 });
+    }
+
+    const result = await response.json();
+
+    return NextResponse.json(result, { status: 201 });
+  } catch (error) {
+    console.error('Error creating ticket:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+```
+
+---
+
+## Frontend Deliverables Checklist
+
+Before completing the frontend, ensure you have:
+
+### ☐ Customer Side Pages
+- [ ] `/support` page - Support form with validation
+- [ ] `/support/ticket/[id]` page - Ticket status display
+- [ ] Form components with react-hook-form + zod validation
+- [ ] Success/error states with proper UI feedback
+- [ ] Responsive design with Tailwind CSS
+- [ ] Loading states for better UX
+
+### ☐ Admin Side Pages
+- [ ] `/admin` page - Dashboard with metrics overview
+- [ ] Stats cards showing total, resolved, escalated, avg response time
+- [ ] Channel metrics with visual charts
+- [ ] Escalation queue (MOST IMPORTANT) with pending items
+- [ ] `/admin/tickets` page - All tickets table with filters
+- [ ] Tickets table with sorting and filtering
+- [ ] `/admin/tickets/[id]` page - Single ticket detail
+- [ ] Reply box with channel selection (email/WhatsApp/web)
+- [ ] Conversation history display
+- [ ] Customer history across all channels
+- [ ] Quick actions (Mark resolved, Reassign)
+- [ ] Admin authentication middleware
+
+### ☐ Integration
+- [ ] API routes connecting to backend
+- [ ] Environment variables configured
+- [ ] TypeScript configurations set up
+- [ ] Tailwind CSS properly configured
+- [ ] All components properly organized (customer/ vs admin/)
+
+### ☐ Polish
+- [ ] Loading states on all pages
+- [ ] Error handling and user feedback
+- [ ] Responsive design for mobile/tablet/desktop
+- [ ] Dark mode support
+- [ ] Accessibility (ARIA labels, keyboard navigation)
+- [ ] Consistent styling across all pages
+
+---
+
+## How All 5 Pages Connect Together
+
+```
+Customer Journey:
+/support → fills form → creates ticket → /support/ticket/[id] → checks status
+                                                        ↓
+                                                    (if not resolved, customer can reply)
+
+Admin Workflow:
+/admin → sees dashboard & escalation queue
+        ↓
+/admin/tickets → sees all tickets → clicks ticket
+        ↓
+/admin/tickets/[id] → reads full conversation + customer history
+        ↓
+                     types reply → selects channel → clicks Send Reply
+        ↓
+          Backend sends reply via Gmail API (if email selected)
+                          OR Twilio API (if WhatsApp selected)
+                          OR saves response (if web form)
+        ↓
+          Updates ticket to "resolved" in database
+        ↓
+        Customer receives human reply via original channel
+        ↓
+        Admin goes back to /admin/tickets → next ticket
+```
+
+**This is the complete 5-page Next.js implementation with proper customer/admin separation!**
 
 ### Task: Build Complete Web Form (REQUIRED DELIVERABLE)
 
