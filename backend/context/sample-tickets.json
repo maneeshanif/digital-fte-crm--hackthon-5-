@@ -1,0 +1,654 @@
+{
+  "tickets": [
+    {
+      "id": 1,
+      "channel": "email",
+      "customer": {
+        "email": "john.doe@acme.com",
+        "name": "John Doe",
+        "company": "Acme Corp"
+      },
+      "subject": "Workflow not executing - urgent!",
+      "message": "Hello, I've been trying to set up a document processing workflow for the past 3 hours. It won't execute no matter what I do. The workflow is published and all nodes are connected. I'm losing patience with this platform.",
+      "category": "technical",
+      "priority": "high",
+      "sentiment": "negative"
+    },
+    {
+      "id": 2,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+15551234567",
+        "name": "Sarah Chen"
+      },
+      "message": "Hi! How do I connect my Slack workspace?",
+      "category": "integration",
+      "priority": "low",
+      "sentiment": "positive"
+    },
+    {
+      "id": 3,
+      "channel": "web_form",
+      "customer": {
+        "email": "mike@startup.io",
+        "name": "Mike Johnson"
+      },
+      "subject": "Feature Request",
+      "message": "Can you add support for Asana integration? We use Asana extensively and it would be great to have it in TechFlow.",
+      "category": "feature_request",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 4,
+      "channel": "email",
+      "customer": {
+        "email": "executive@megacorp.com",
+        "name": "David Smith",
+        "company": "MegaCorp"
+      },
+      "subject": "RE: Enterprise License - Refund Request",
+      "message": "We've decided not to move forward with TechFlow. The platform doesn't meet our compliance requirements. Please process our refund of $50,000 for the upfront payment.",
+      "category": "billing",
+      "priority": "critical",
+      "sentiment": "negative"
+    },
+    {
+      "id": 5,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+15559876543",
+        "name": "Emma Wilson"
+      },
+      "message": "My workflow is super slow. Takes like 5 mins to run. Help?",
+      "category": "technical",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 6,
+      "channel": "web_form",
+      "customer": {
+        "email": "developer@tech.co",
+        "name": "Alex Kim"
+      },
+      "subject": "API Question",
+      "message": "What's the rate limit for webhook integrations? I need to process about 2000 requests per hour for my use case.",
+      "category": "technical",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 7,
+      "channel": "email",
+      "customer": {
+        "email": "it-manager@hospital.org",
+        "name": "Dr. Robert Chen",
+        "company": "City Hospital"
+      },
+      "subject": "Security Question - HIPAA Compliance",
+      "message": "We're a healthcare organization and need to ensure TechFlow is HIPAA compliant. Can you provide your BAA and security documentation?",
+      "category": "compliance",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 8,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+15555555555",
+        "name": "Lisa Park"
+      },
+      "message": "How much for 50 users? Need pricing info ASAP",
+      "category": "pricing",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 9,
+      "channel": "web_form",
+      "customer": {
+        "email": "new.user@company.com",
+        "name": "Jamie Brown"
+      },
+      "subject": "Can't login",
+      "message": "I just signed up but can't login. Says invalid credentials. I'm using the correct email and password.",
+      "category": "technical",
+      "priority": "high",
+      "sentiment": "negative"
+    },
+    {
+      "id": 10,
+      "channel": "email",
+      "customer": {
+        "email": "happy.user@success.com",
+        "name": "Jennifer Taylor"
+      },
+      "subject": "Love the product! One question",
+      "message": "TechFlow has been amazing for our team! We've automated 15 workflows already. Quick question - is there a way to export workflow data to CSV for our weekly reports?",
+      "category": "technical",
+      "priority": "low",
+      "sentiment": "positive"
+    },
+    {
+      "id": 11,
+      "channel": "email",
+      "customer": {
+        "email": "ops@financegroup.com",
+        "name": "Rachel Moore",
+        "company": "Finance Group LLC"
+      },
+      "subject": "GDPR Data Processing Agreement",
+      "message": "We are a EU-based company and require a signed Data Processing Agreement before we can proceed with TechFlow. Can you provide your DPA and confirm your GDPR compliance status?",
+      "category": "compliance",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 12,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+447700900123",
+        "name": "Tom Nguyen"
+      },
+      "message": "Hey quick q - does TechFlow integrate with Salesforce?",
+      "category": "integration",
+      "priority": "low",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 13,
+      "channel": "web_form",
+      "customer": {
+        "email": "admin@retail.co",
+        "name": "Sandra Lee"
+      },
+      "subject": "Bulk workflow import",
+      "message": "Is there a way to import multiple workflows at once from a JSON or CSV file? We have about 200 workflows to migrate from our old system.",
+      "category": "feature_request",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 14,
+      "channel": "email",
+      "customer": {
+        "email": "cto@devshop.io",
+        "name": "Marcus Lee",
+        "company": "DevShop"
+      },
+      "subject": "Outage - all workflows stopped",
+      "message": "URGENT - All our production workflows have stopped running as of 9am EST. We are losing money every minute. This is a critical outage. Need immediate support.",
+      "category": "technical",
+      "priority": "critical",
+      "sentiment": "negative"
+    },
+    {
+      "id": 15,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+61412345678",
+        "name": "Priya Patel"
+      },
+      "message": "The analytics dashboard isn't loading. Just shows a blank screen.",
+      "category": "technical",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 16,
+      "channel": "web_form",
+      "customer": {
+        "email": "billing@logisticsco.com",
+        "name": "Chris Evans"
+      },
+      "subject": "Invoice discrepancy",
+      "message": "Our invoice for March shows $199 but we're on the Starter plan at $49. Please review and send a corrected invoice. We need this for our accounting department.",
+      "category": "billing",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 17,
+      "channel": "email",
+      "customer": {
+        "email": "dev@saas.com",
+        "name": "Nina Roberts",
+        "company": "SaaS Co"
+      },
+      "subject": "Webhook payload format",
+      "message": "Hi, I'm integrating TechFlow with our internal system via webhooks. Can you share the full payload schema for workflow completion events? The docs seem incomplete.",
+      "category": "technical",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 18,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+12025551234",
+        "name": "Kevin Zhang"
+      },
+      "message": "Love TechFlow! Is there a dark mode? Would be great for late night work",
+      "category": "feature_request",
+      "priority": "low",
+      "sentiment": "positive"
+    },
+    {
+      "id": 19,
+      "channel": "web_form",
+      "customer": {
+        "email": "manager@enterprise.org",
+        "name": "Patricia Walsh"
+      },
+      "subject": "SSO configuration help",
+      "message": "We're trying to configure SSO with Azure AD but keep getting a redirect loop. Our IT team has followed the documentation but it's not working. Can you walk us through the exact steps?",
+      "category": "technical",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 20,
+      "channel": "email",
+      "customer": {
+        "email": "angry.customer@corp.com",
+        "name": "Brian Hoffman",
+        "company": "Corp Industries"
+      },
+      "subject": "Terrible service - cancel subscription",
+      "message": "This is the worst experience I've ever had with a SaaS product. Your support is useless, the platform crashes constantly, and I've wasted 3 days trying to get a simple workflow running. Cancel my subscription immediately and issue a refund.",
+      "category": "billing",
+      "priority": "critical",
+      "sentiment": "negative"
+    },
+    {
+      "id": 21,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+4915123456789",
+        "name": "Lena Schmidt"
+      },
+      "message": "Hi! I forgot my password. How do I reset it?",
+      "category": "technical",
+      "priority": "low",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 22,
+      "channel": "web_form",
+      "customer": {
+        "email": "startup.ceo@newco.com",
+        "name": "James Carter"
+      },
+      "subject": "Startup discount available?",
+      "message": "We're a seed-stage startup with 5 employees. Do you offer any startup discounts or special pricing for early-stage companies? We love the product but the Professional plan is a bit steep for us right now.",
+      "category": "pricing",
+      "priority": "medium",
+      "sentiment": "positive"
+    },
+    {
+      "id": 23,
+      "channel": "email",
+      "customer": {
+        "email": "qa@techfirm.net",
+        "name": "Angela Reyes",
+        "company": "TechFirm"
+      },
+      "subject": "Sandbox environment issues",
+      "message": "The sandbox mode for testing workflows doesn't seem to reflect the same behavior as production. We're getting different results when we run the same workflow in sandbox vs live. Is this a known bug?",
+      "category": "technical",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 24,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+81901234567",
+        "name": "Yuki Tanaka"
+      },
+      "message": "Does TechFlow support multi-language? Our team uses Japanese",
+      "category": "feature_request",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 25,
+      "channel": "web_form",
+      "customer": {
+        "email": "security@bank.com",
+        "name": "Daniel Torres"
+      },
+      "subject": "SOC2 Report Request",
+      "message": "Our security team requires a copy of your most recent SOC2 Type II audit report before we can approve TechFlow for use in our environment. Can you provide this under NDA?",
+      "category": "compliance",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 26,
+      "channel": "email",
+      "customer": {
+        "email": "freelancer@design.io",
+        "name": "Mia Collins"
+      },
+      "subject": "Cannot connect Google Drive",
+      "message": "Hello! I've been trying to connect my Google Drive to TechFlow for the past hour and keep getting an 'authorization failed' error. I've revoked and re-authorized the connection multiple times. Please help!",
+      "category": "integration",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 27,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+351912345678",
+        "name": "Carlos Mendes"
+      },
+      "message": "Amazing product! We saved 20 hours a week. Thank you!",
+      "category": "general",
+      "priority": "low",
+      "sentiment": "positive"
+    },
+    {
+      "id": 28,
+      "channel": "web_form",
+      "customer": {
+        "email": "it@manufacturing.com",
+        "name": "Frank Larson"
+      },
+      "subject": "API key management",
+      "message": "We need to rotate our API keys due to a potential security incident. How do we invalidate the current key and generate a new one without downtime?",
+      "category": "technical",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 29,
+      "channel": "email",
+      "customer": {
+        "email": "product@agency.co",
+        "name": "Sophie Turner",
+        "company": "Agency Co"
+      },
+      "subject": "Client sub-accounts feature request",
+      "message": "We manage TechFlow for multiple clients. It would be really useful to have a master account that can manage sub-accounts for each client with separate billing. Is this on the roadmap?",
+      "category": "feature_request",
+      "priority": "medium",
+      "sentiment": "positive"
+    },
+    {
+      "id": 30,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+16505551234",
+        "name": "Andre Martin"
+      },
+      "message": "Getting 'node credential invalid' error on HubSpot node. Was working fine yesterday",
+      "category": "integration",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 31,
+      "channel": "web_form",
+      "customer": {
+        "email": "hr@corporation.com",
+        "name": "Grace Kim"
+      },
+      "subject": "Downgrade subscription",
+      "message": "We want to downgrade from Professional to Starter plan. We're not using the advanced features. How do we do this and will we get a prorated refund for the remaining month?",
+      "category": "billing",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 32,
+      "channel": "email",
+      "customer": {
+        "email": "ciso@healthsystem.org",
+        "name": "Paul Henderson",
+        "company": "Regional Health System"
+      },
+      "subject": "Penetration Test Results - Critical Vulnerability",
+      "message": "Our internal pentest found what appears to be a SQL injection vulnerability in the workflow query endpoint. I have a detailed report to share. This needs urgent attention from your security team.",
+      "category": "compliance",
+      "priority": "critical",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 33,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+33612345678",
+        "name": "Claire Dubois"
+      },
+      "message": "How many workflows can I have on Professional plan?",
+      "category": "pricing",
+      "priority": "low",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 34,
+      "channel": "web_form",
+      "customer": {
+        "email": "ops@retailchain.com",
+        "name": "Tyler Brooks"
+      },
+      "subject": "Workflow running twice",
+      "message": "Our order processing workflow is running twice for every trigger. This is creating duplicate records in our database. This is a bug - please fix urgently as it's affecting live orders.",
+      "category": "technical",
+      "priority": "critical",
+      "sentiment": "negative"
+    },
+    {
+      "id": 35,
+      "channel": "email",
+      "customer": {
+        "email": "intern@startup.com",
+        "name": "Olivia Grant",
+        "company": "StartupCo"
+      },
+      "subject": "Getting started question",
+      "message": "Hi! I'm new to TechFlow and trying to build my first workflow. I followed the tutorial but I'm confused about the difference between triggers and conditions. Can you explain?",
+      "category": "technical",
+      "priority": "low",
+      "sentiment": "positive"
+    },
+    {
+      "id": 36,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+34612345678",
+        "name": "Roberto Silva"
+      },
+      "message": "System down? Can't access my dashboard since this morning",
+      "category": "technical",
+      "priority": "critical",
+      "sentiment": "negative"
+    },
+    {
+      "id": 37,
+      "channel": "web_form",
+      "customer": {
+        "email": "research@university.edu",
+        "name": "Dr. Amanda Fox"
+      },
+      "subject": "Academic pricing or free tier?",
+      "message": "I'm a professor using TechFlow for research purposes. Does TechFlow offer any academic discounts or a free tier for research institutions? Our grant budget is very limited.",
+      "category": "pricing",
+      "priority": "low",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 38,
+      "channel": "email",
+      "customer": {
+        "email": "coo@growthco.com",
+        "name": "Nathan Bell",
+        "company": "GrowthCo"
+      },
+      "subject": "Enterprise contract renewal",
+      "message": "Our Enterprise contract is up for renewal next month. We'd like to negotiate pricing for a 3-year commitment with 500 seats. Who should I speak with about this?",
+      "category": "billing",
+      "priority": "high",
+      "sentiment": "positive"
+    },
+    {
+      "id": 39,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+9112345678",
+        "name": "Raj Sharma"
+      },
+      "message": "Loved the new analytics feature! When will reports export be available?",
+      "category": "feature_request",
+      "priority": "low",
+      "sentiment": "positive"
+    },
+    {
+      "id": 40,
+      "channel": "web_form",
+      "customer": {
+        "email": "dev@ecommerce.store",
+        "name": "Hannah White"
+      },
+      "subject": "Zapier integration broken",
+      "message": "Our Zapier integration stopped working after the latest TechFlow update. The Zap shows 'authentication error'. We have critical automations going through this. Need immediate help.",
+      "category": "integration",
+      "priority": "high",
+      "sentiment": "negative"
+    },
+    {
+      "id": 41,
+      "channel": "email",
+      "customer": {
+        "email": "admin@nonprofit.org",
+        "name": "Samuel Davis",
+        "company": "Community Nonprofit"
+      },
+      "subject": "Nonprofit discount request",
+      "message": "We are a registered 501(c)(3) nonprofit organization. Do you offer discounted pricing for nonprofits? We currently have 20 staff who would benefit from TechFlow.",
+      "category": "pricing",
+      "priority": "low",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 42,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+6591234567",
+        "name": "Wei Lin"
+      },
+      "message": "The mobile view is hard to use. Any mobile app planned?",
+      "category": "feature_request",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 43,
+      "channel": "web_form",
+      "customer": {
+        "email": "payable@bigcorp.com",
+        "name": "Diana Price"
+      },
+      "subject": "Need PO-based billing",
+      "message": "Our procurement policy requires purchase order-based billing. Can TechFlow support net-30 invoicing tied to a PO number? This is mandatory for us to proceed.",
+      "category": "billing",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 44,
+      "channel": "email",
+      "customer": {
+        "email": "tech@mediagroup.tv",
+        "name": "Victor Hernandez",
+        "company": "Media Group"
+      },
+      "subject": "Audit logs missing",
+      "message": "We need audit logs going back 180 days for a regulatory audit, but the system only shows 90 days. Our Enterprise contract stated extended audit log retention. Please escalate this to your compliance team.",
+      "category": "compliance",
+      "priority": "high",
+      "sentiment": "negative"
+    },
+    {
+      "id": 45,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+821012345678",
+        "name": "Ji-Young Park"
+      },
+      "message": "Can workflows be triggered by email? Like when I receive an email in Gmail?",
+      "category": "integration",
+      "priority": "low",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 46,
+      "channel": "web_form",
+      "customer": {
+        "email": "growth@scaleup.io",
+        "name": "Isabel Moreno"
+      },
+      "subject": "Team roles and permissions",
+      "message": "How do I set up different permission levels for my team? I need some users to only be able to view workflows, not edit them. Is role-based access control available on the Professional plan?",
+      "category": "technical",
+      "priority": "medium",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 47,
+      "channel": "email",
+      "customer": {
+        "email": "frustrated@enterprise.com",
+        "name": "Aaron Mitchell",
+        "company": "Enterprise Solutions"
+      },
+      "subject": "Third billing error this month",
+      "message": "This is absolutely unacceptable. You've charged my card three times this month and each time I've contacted support, nothing gets resolved. I'm going to dispute all charges with my bank and report this to the BBB if this isn't fixed today.",
+      "category": "billing",
+      "priority": "critical",
+      "sentiment": "negative"
+    },
+    {
+      "id": 48,
+      "channel": "whatsapp",
+      "customer": {
+        "phone": "+447911123456",
+        "name": "Charlotte Hughes"
+      },
+      "message": "Hi! Does TechFlow support Microsoft Teams notifications?",
+      "category": "integration",
+      "priority": "low",
+      "sentiment": "positive"
+    },
+    {
+      "id": 49,
+      "channel": "web_form",
+      "customer": {
+        "email": "infosec@defense.gov",
+        "name": "Agent Cooper"
+      },
+      "subject": "FedRAMP Authorization",
+      "message": "We are a federal agency evaluating TechFlow. Does TechFlow have FedRAMP authorization or is it in the process of obtaining it? This is a hard requirement for any cloud software we use.",
+      "category": "compliance",
+      "priority": "high",
+      "sentiment": "neutral"
+    },
+    {
+      "id": 50,
+      "channel": "email",
+      "customer": {
+        "email": "power.user@consulting.com",
+        "name": "Monica Stewart",
+        "company": "Strategy Consulting"
+      },
+      "subject": "Workflow performance optimization tips",
+      "message": "Hi TechFlow team! I've been a Pro user for 2 years and love the platform. My complex workflow with 40 nodes is starting to run slowly. Do you have any best practices or guides for optimizing large workflows? Happy to share my setup.",
+      "category": "technical",
+      "priority": "low",
+      "sentiment": "positive"
+    }
+  ]
+}

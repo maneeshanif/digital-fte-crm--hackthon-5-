@@ -1,0 +1,72 @@
+{
+  "mcp_server": {
+    "name": "customer-success-fte",
+    "version": "1.0.0",
+    "description": "FastMCP server for Customer Success Digital FTE",
+    "host": "localhost",
+    "port": 8000,
+    "log_level": "INFO"
+  },
+  "tools": {
+    "search_knowledge_base": {
+      "name": "search_knowledge_base",
+      "description": "Search product documentation for relevant information",
+      "enabled": true
+    },
+    "create_ticket": {
+      "name": "create_ticket",
+      "description": "Create support ticket with channel tracking",
+      "enabled": true
+    },
+    "get_customer_history": {
+      "name": "get_customer_history",
+      "description": "Get customer interaction history across all channels",
+      "enabled": true
+    },
+    "send_response": {
+      "name": "send_response",
+      "description": "Send response to customer via appropriate channel",
+      "enabled": true
+    },
+    "escalate_to_human": {
+      "name": "escalate_to_human",
+      "description": "Escalate ticket to human support",
+      "enabled": true
+    },
+    "analyze_sentiment": {
+      "name": "analyze_sentiment",
+      "description": "Analyze sentiment of customer message",
+      "enabled": true
+    },
+    "get_channel_formatting": {
+      "name": "get_channel_formatting",
+      "description": "Get response formatting guidelines for specific channel",
+      "enabled": true
+    }
+  },
+  "channels": {
+    "email": {
+      "name": "email",
+      "delivery_method": "Gmail API",
+      "max_length": 500,
+      "style": "Formal, detailed"
+    },
+    "whatsapp": {
+      "name": "whatsapp",
+      "delivery_method": "Twilio WhatsApp",
+      "max_length": 160,
+      "style": "Conversational, concise"
+    },
+    "web_form": {
+      "name": "web_form",
+      "delivery_method": "Email + API response",
+      "max_length": 300,
+      "style": "Semi-formal, helpful"
+    }
+  },
+  "performance": {
+    "timeout": 30,
+    "max_concurrent_requests": 10,
+    "response_time_target": 2.0
+  }
+}

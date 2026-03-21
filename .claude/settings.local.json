@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod +x .claude/skills/*/scripts/*.sh)",
+      "Bash(ls -la .claude/skills/*/scripts/)"
+    ]
+  }
+}
